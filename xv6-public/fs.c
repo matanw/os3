@@ -375,7 +375,6 @@ bmap(struct inode *ip, uint bn)
 {
   uint addr, *a;
   struct buf *bp;
-  u
 
   if(bn < NDIRECT){
     if((addr = ip->addrs[bn]) == 0)
