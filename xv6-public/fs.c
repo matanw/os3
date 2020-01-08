@@ -375,6 +375,7 @@ bmap(struct inode *ip, uint bn)
 {
   uint addr, *a;
   struct buf *bp;
+  u
 
   if(bn < NDIRECT){
     if((addr = ip->addrs[bn]) == 0)
@@ -401,6 +402,33 @@ bmap(struct inode *ip, uint bn)
 	Add code that supports double indirection
   
   */
+
+
+  bn -= NDIRECT;
+  if (bn < NDIRECT*NDIRECT){
+   if((addr = ip->addrs[NDIRECT+1]) == 0)
+    ip->addrs[NDIRECT+1] = addr = balloc(ip->dev);
+   bp = bread(ip->dev, addr);
+   a = (uint*)bp->data;
+   if((addr = a[bn/NDIRECT]) == 0){
+      a[bn/NDIRECT] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+
+    bp = bread(ip->dev, addr);
+   a = (uint*)bp->data;
+   if((addr = a[bn%NDIRECT]) == 0){
+      a[bn%NDIRECT] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+    return addrs;
+
+
+
+
+  }
   panic("bmap: out of range");
 }
 
