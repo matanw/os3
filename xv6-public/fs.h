@@ -32,7 +32,7 @@ struct superblock {
   should be a singly-indirect block (just like the current one); the 13th should be your new doubly-indirect block.
 
 */
-#define NDIRECT 10
+#define NDIRECT 11
 #define NINDIRECT (BSIZE / sizeof(uint))
 #define MAXFILE (NDIRECT + NINDIRECT)
 
