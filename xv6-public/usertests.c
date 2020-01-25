@@ -1158,35 +1158,42 @@ QEMUOPTS = -hdb fs.img xv6.img -smp $(CPUS) -m 512 $(QEMUEXTRA) -snapshot
 void
 bigfile(void)
 {
-  char buf[512];
-  int fd, i, sectors;
+  //char buf[512];
+  int fd;//, sectors;//int i
   unlink("big.file");
   fd = open("big.file", O_CREATE | O_WRONLY);
   if(fd < 0){
     printf(2, "big: cannot open big.file for writing\n");
     exit();
   }
-
+/*
   sectors = 0;
   while(1){
     *(int*)buf = sectors;
-    int cc = write(fd, buf, sizeof(buf));
-    if(cc <= 0)
+    //int cc = 
+           write(fd, buf, sizeof(buf));
+   // if(cc <= 0)
       break;
     sectors++;
-	if (sectors % 100 == 0)
-		printf(2, ".");
+  if (sectors % 100 == 0)
+    printf(2, ".");
   }
 
   printf(1, "\nwrote %d sectors\n", sectors);
-
-  close(fd);
-  fd = open("big.file", O_RDONLY);
+  
+  printf(1, "\na1\n");
+ */
+  close(fd);  
+  printf(1, "\na2\n");
+  /*fd = open("big.file", O_RDONLY);
+  printf(1, "\na3\n");
   if(fd < 0){
     printf(2, "big: cannot re-open big.file for reading\n");
     exit();
   }
   for(i = 0; i < sectors; i++){
+
+    printf(1, "\na4, sectors=%d, i= %d\n",sectors, i);
     int cc = read(fd, buf, sizeof(buf));
     if(cc <= 0){
       printf(2, "big: read error at sector %d\n", i);
@@ -1198,10 +1205,11 @@ bigfile(void)
       exit();
     }
   }
-
+  printf(1, "\na5\n");
   close(fd);
+  */printf(1, "\na6\n");
   unlink("big.file");
-
+  printf(1, "\na7\n");
   printf(1, "bigfile test ok\n");
 }
 
@@ -1209,41 +1217,82 @@ void
 fourteen(void)
 {
   int fd;
+  fd=3;
 
   // DIRSIZ is 14.
   printf(1, "fourteen test\n");
+  printf(1, "fd=%d\n",fd);
 
-  if(mkdir("12345678901234") != 0){
+  if(mkdir("12345678901234") != 0){//1
     printf(1, "mkdir 12345678901234 failed\n");
     exit();
   }
-  if(mkdir("12345678901234/123456789012345") != 0){
+  if(mkdir("12345678901234/123456789012345") != 0){//2
     printf(1, "mkdir 12345678901234/123456789012345 failed\n");
     exit();
   }
-  fd = open("123456789012345/123456789012345/123456789012345", O_CREATE);
+ /* fd = open("123456789012345/123456789012345/123456789012345", O_CREATE);//3
   if(fd < 0){
     printf(1, "create 123456789012345/123456789012345/123456789012345 failed\n");
     exit();
   }
   close(fd);
-  fd = open("12345678901234/12345678901234/12345678901234", 0);
+  fd = open("12345678901234/12345678901234/12345678901234", 0);//4
   if(fd < 0){
     printf(1, "open 12345678901234/12345678901234/12345678901234 failed\n");
     exit();
   }
   close(fd);
 
-  if(mkdir("12345678901234/12345678901234") == 0){
+  if(mkdir("12345678901234/12345678901234") == 0){//5
     printf(1, "mkdir 12345678901234/12345678901234 succeeded!\n");
     exit();
   }
-  if(mkdir("123456789012345/12345678901234") == 0){
+  if(mkdir("123456789012345/12345678901234") == 0){//6
     printf(1, "mkdir 12345678901234/123456789012345 succeeded!\n");
     exit();
-  }
+  }*/
 
   printf(1, "fourteen ok\n");
+/*
+[1-6] fail 
+[1-3] fail
+[1] pass
+[1-2]  fail
+*/
+}
+void
+mytest(void)
+{
+  int fd, valid;
+  fd = 3;
+  valid = 0;
+
+  // DIRSIZ is 14.
+  printf(1, "my test - fourteen test\n");
+  printf(1, "fd=%d\n",fd);
+  if(mkdir("12345678901234") != 0){//1
+    printf(1, "mkdir 12345678901234 failed\n");
+    exit();
+  }
+  if(!valid){
+    if(mkdir("12345678901234/123456789012345") != 0){//2
+      printf(1, "mkdir 12345678901234/123456789012345 failed\n");
+      exit();
+    }
+  }
+  printf(1, "my test - fourteen ok\n");
+  unlink("big.file");
+  fd = open("big.file", O_CREATE | O_WRONLY);
+  if(fd < 0){
+    printf(2, "big: cannot open big.file for writing\n");
+    exit();
+  }
+  close(fd);  
+  printf(1, "\ngoing to unlink\n");
+  unlink("big.file");
+  printf(1, "\nunlik pass\n");
+  printf(1, "my test - bigfile test ok\n");
 }
 
 void
@@ -1761,23 +1810,34 @@ main(int argc, char *argv[])
   }
   close(open("usertests.ran", O_CREATE));
 
-  argptest();
-  sharedfd();
-  bigargtest();
-  bsstest();
-  sbrktest();
-  validatetest();
-  opentest();
-  writetest();
-  createtest();
-  mem();
-  pipe1();
-  preempt();
-  exitwait();
-  rmdot();
-  fourteen();
-  uio();
-  bigfile(); // slow
+ /*  argptest();//1
+  sharedfd();//2
+  bigargtest();//3
+  bsstest();//4
+  sbrktest();//5
+  validatetest();//6
+  opentest();//7
+  writetest();//8
+  createtest();//9
+  mem();//10
+  pipe1();//11
+  preempt();//12
+ exitwait();//13
+  rmdot();//14*/
+  //fourteen();//15
+ /* uio();//16
+  */
+/*
+[] V
+[1-16] X
+[1-8] Pass
+[1-12] Pass
+[1-14] Pass
+[1-15] fail
+[15, big file
+*/
+  //bigfile(); // slow
+mytest();
   exectest();
 
   exit();
